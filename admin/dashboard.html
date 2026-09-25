@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard | Eagle Eye Security</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <h2>Eagle Eye Admin</h2>
+      <nav>
+        <a href="#enquiries" data-tab="enquiries">Client Enquiries</a>
+        <a href="#applications" data-tab="applications">Job Applications</a>
+        <a href="#jobs" data-tab="jobs">Job Openings</a>
+        <a href="#services" data-tab="services">Services</a>
+        <a href="#settings" data-tab="settings">Site Settings</a>
+      </nav>
+      <span class="logout" id="logoutBtn">Sign out</span>
+    </aside>
+    <main class="main" id="main">
+      <!-- rendered by admin.js -->
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>
