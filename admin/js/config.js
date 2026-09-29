@@ -5,4 +5,4 @@
 
 const SUPABASE_URL = 'https://ktgelqrvavtgpxtmdmqf.supabase.co'; 
 const SUPABASE_ANON_KEY = 'sb_publishable_ThYCYIQuGv83MTR1-kKtRg_9twgLsjM';
-const API_BASE_URL = 'http://localhost:4000';
+const API_BASE_URL = 'https://eagle-eye-security.onrender.com'';
