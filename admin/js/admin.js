@@ -18,8 +18,27 @@ let accessToken = null;
     window.location.href = 'index.html';
   });
 
+  // Mobile sidebar drawer handlers
+  const sidebar = document.getElementById('adminSidebar');
+  const sidebarBackdrop = document.getElementById('adminNavBackdrop');
+  const navToggle = document.getElementById('adminNavToggle');
+  const sidebarClose = document.getElementById('adminSidebarClose');
+
+  function toggleSidebar(open) {
+    const shouldOpen = typeof open === 'boolean' ? open : !sidebar.classList.contains('open');
+    sidebar?.classList.toggle('open', shouldOpen);
+    sidebarBackdrop?.classList.toggle('open', shouldOpen);
+  }
+
+  navToggle?.addEventListener('click', () => toggleSidebar(true));
+  sidebarClose?.addEventListener('click', () => toggleSidebar(false));
+  sidebarBackdrop?.addEventListener('click', () => toggleSidebar(false));
+
   document.querySelectorAll('.sidebar nav a').forEach((a) => {
-    a.addEventListener('click', () => setActiveTab(a.dataset.tab));
+    a.addEventListener('click', () => {
+      setActiveTab(a.dataset.tab);
+      toggleSidebar(false);
+    });
   });
 
   const initialTab = window.location.hash.replace('#', '') || 'enquiries';
@@ -77,20 +96,22 @@ async function renderEnquiries() {
   const statuses = ['New', 'Contacted', 'In Progress', 'Closed'];
 
   main.querySelector('#content').innerHTML = rows.length ? `
-    <table><thead><tr><th>Date</th><th>Name</th><th>Contact</th><th>Subject</th><th>Status</th><th></th></tr></thead>
-    <tbody>${rows.map((r) => `
-      <tr>
-        <td>${fmtDate(r.created_at)}</td>
-        <td>${esc(r.name)}</td>
-        <td>${esc(r.email)}<br><span class="muted">${esc(r.mobile)}</span></td>
-        <td>${esc(r.subject)}</td>
-        <td>${badge(r.status)}</td>
-        <td>
-          <select data-id="${r.id}" class="enquiry-status">
-            ${statuses.map((s) => `<option value="${s}" ${s === r.status ? 'selected' : ''}>${s}</option>`).join('')}
-          </select>
-        </td>
-      </tr>`).join('')}</tbody></table>
+    <div class="table-responsive">
+      <table><thead><tr><th>Date</th><th>Name</th><th>Contact</th><th>Subject</th><th>Status</th><th></th></tr></thead>
+      <tbody>${rows.map((r) => `
+        <tr>
+          <td>${fmtDate(r.created_at)}</td>
+          <td>${esc(r.name)}</td>
+          <td>${esc(r.email)}<br><span class="muted">${esc(r.mobile)}</span></td>
+          <td>${esc(r.subject)}</td>
+          <td>${badge(r.status)}</td>
+          <td>
+            <select data-id="${r.id}" class="enquiry-status">
+              ${statuses.map((s) => `<option value="${s}" ${s === r.status ? 'selected' : ''}>${s}</option>`).join('')}
+            </select>
+          </td>
+        </tr>`).join('')}</tbody></table>
+    </div>
   ` : `<div class="empty-state">No enquiries yet.</div>`;
 
   main.querySelectorAll('.enquiry-status').forEach((sel) => {
@@ -110,20 +131,22 @@ async function renderApplications() {
   const statuses = ['New', 'Reviewed', 'Shortlisted', 'Rejected', 'Hired'];
 
   main.querySelector('#content').innerHTML = rows.length ? `
-    <table><thead><tr><th>Date</th><th>Name</th><th>Contact</th><th>Applied For</th><th>Status</th><th></th></tr></thead>
-    <tbody>${rows.map((r) => `
-      <tr>
-        <td>${fmtDate(r.created_at)}</td>
-        <td>${esc(r.name)}</td>
-        <td>${esc(r.email)}<br><span class="muted">${esc(r.mobile)}</span></td>
-        <td>${esc(r.job_openings?.title || '—')}</td>
-        <td>${badge(r.status)}</td>
-        <td>
-          <select data-id="${r.id}" class="app-status">
-            ${statuses.map((s) => `<option value="${s}" ${s === r.status ? 'selected' : ''}>${s}</option>`).join('')}
-          </select>
-        </td>
-      </tr>`).join('')}</tbody></table>
+    <div class="table-responsive">
+      <table><thead><tr><th>Date</th><th>Name</th><th>Contact</th><th>Applied For</th><th>Status</th><th></th></tr></thead>
+      <tbody>${rows.map((r) => `
+        <tr>
+          <td>${fmtDate(r.created_at)}</td>
+          <td>${esc(r.name)}</td>
+          <td>${esc(r.email)}<br><span class="muted">${esc(r.mobile)}</span></td>
+          <td>${esc(r.job_openings?.title || '—')}</td>
+          <td>${badge(r.status)}</td>
+          <td>
+            <select data-id="${r.id}" class="app-status">
+              ${statuses.map((s) => `<option value="${s}" ${s === r.status ? 'selected' : ''}>${s}</option>`).join('')}
+            </select>
+          </td>
+        </tr>`).join('')}</tbody></table>
+    </div>
   ` : `<div class="empty-state">No applications yet.</div>`;
 
   main.querySelectorAll('.app-status').forEach((sel) => {
@@ -142,17 +165,21 @@ async function renderJobs() {
   const rows = await api('/api/jobs/admin/all').catch((e) => { main.querySelector('#content').textContent = e.message; return []; });
 
   main.querySelector('#content').innerHTML = rows.length ? `
-    <table><thead><tr><th>Title</th><th>Location</th><th>Active</th><th></th></tr></thead>
-    <tbody>${rows.map((r) => `
-      <tr>
-        <td>${esc(r.title)}</td>
-        <td>${esc(r.location || '—')}</td>
-        <td>${r.is_active ? 'Yes' : 'No'}</td>
-        <td>
-          <button class="btn btn-ghost btn-sm edit-job" data-id="${r.id}">Edit</button>
-          <button class="btn btn-danger btn-sm del-job" data-id="${r.id}">Delete</button>
-        </td>
-      </tr>`).join('')}</tbody></table>
+    <div class="table-responsive">
+      <table><thead><tr><th>Title</th><th>Location</th><th>Active</th><th>Actions</th></tr></thead>
+      <tbody>${rows.map((r) => `
+        <tr>
+          <td><strong>${esc(r.title)}</strong></td>
+          <td>${esc(r.location || '—')}</td>
+          <td>${r.is_active ? '<span class="badge badge-In-Progress">Yes</span>' : '<span class="badge badge-Closed">No</span>'}</td>
+          <td>
+            <div class="row" style="gap:6px;">
+              <button class="btn btn-ghost btn-sm edit-job" data-id="${r.id}">Edit</button>
+              <button class="btn btn-danger btn-sm del-job" data-id="${r.id}">Delete</button>
+            </div>
+          </td>
+        </tr>`).join('')}</tbody></table>
+    </div>
   ` : `<div class="empty-state">No job openings yet.</div>`;
 
   document.getElementById('addJobBtn').addEventListener('click', () => openJobModal());
@@ -204,17 +231,21 @@ async function renderServices() {
   const rows = await api('/api/services/admin/all').catch((e) => { main.querySelector('#content').textContent = e.message; return []; });
 
   main.querySelector('#content').innerHTML = rows.length ? `
-    <table><thead><tr><th>Order</th><th>Title</th><th>Active</th><th></th></tr></thead>
-    <tbody>${rows.map((r) => `
-      <tr>
-        <td>${r.sort_order}</td>
-        <td>${esc(r.title)}</td>
-        <td>${r.is_active ? 'Yes' : 'No'}</td>
-        <td>
-          <button class="btn btn-ghost btn-sm edit-svc" data-id="${r.id}">Edit</button>
-          <button class="btn btn-danger btn-sm del-svc" data-id="${r.id}">Delete</button>
-        </td>
-      </tr>`).join('')}</tbody></table>
+    <div class="table-responsive">
+      <table><thead><tr><th>Order</th><th>Title</th><th>Active</th><th>Actions</th></tr></thead>
+      <tbody>${rows.map((r) => `
+        <tr>
+          <td>${r.sort_order}</td>
+          <td><strong>${esc(r.title)}</strong></td>
+          <td>${r.is_active ? '<span class="badge badge-In-Progress">Yes</span>' : '<span class="badge badge-Closed">No</span>'}</td>
+          <td>
+            <div class="row" style="gap:6px;">
+              <button class="btn btn-ghost btn-sm edit-svc" data-id="${r.id}">Edit</button>
+              <button class="btn btn-danger btn-sm del-svc" data-id="${r.id}">Delete</button>
+            </div>
+          </td>
+        </tr>`).join('')}</tbody></table>
+    </div>
   ` : `<div class="empty-state">No services yet.</div>`;
 
   document.getElementById('addSvcBtn').addEventListener('click', () => openServiceModal());

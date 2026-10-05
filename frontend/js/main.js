@@ -1,25 +1,50 @@
-// Mobile nav toggle
+  // Mobile nav toggle & backdrop
   const burger = document.getElementById('burgerBtn');
   const navLinks = document.getElementById('navLinks');
-  burger.addEventListener('click', () => navLinks.classList.toggle('open'));
-  navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => navLinks.classList.remove('open')));
+  const navBackdrop = document.getElementById('navBackdrop');
 
-  // 3D tilt on glass cards
-  document.querySelectorAll('.glass-card').forEach(card => {
-    card.addEventListener('mousemove', e => {
-      const r = card.getBoundingClientRect();
-      const x = e.clientX - r.left;
-      const y = e.clientY - r.top;
-      const cx = x / r.width - 0.5;
-      const cy = y / r.height - 0.5;
-      card.style.transform = `rotateX(${(-cy * 8).toFixed(2)}deg) rotateY(${(cx * 10).toFixed(2)}deg) translateY(-4px)`;
-      card.style.setProperty('--mx', x + 'px');
-      card.style.setProperty('--my', y + 'px');
-    });
-    card.addEventListener('mouseleave', () => {
-      card.style.transform = 'rotateX(0) rotateY(0) translateY(0)';
-    });
+  function toggleMobileNav(forceState) {
+    const shouldOpen = typeof forceState === 'boolean' ? forceState : !navLinks.classList.contains('open');
+    navLinks.classList.toggle('open', shouldOpen);
+    burger?.classList.toggle('open', shouldOpen);
+    burger?.setAttribute('aria-expanded', shouldOpen ? 'true' : 'false');
+    navBackdrop?.classList.toggle('open', shouldOpen);
+    document.body.style.overflow = shouldOpen ? 'hidden' : '';
+  }
+
+  if (burger) {
+    burger.addEventListener('click', () => toggleMobileNav());
+  }
+  if (navBackdrop) {
+    navBackdrop.addEventListener('click', () => toggleMobileNav(false));
+  }
+  navLinks?.querySelectorAll('a').forEach(a => {
+    a.addEventListener('click', () => toggleMobileNav(false));
   });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && navLinks?.classList.contains('open')) {
+      toggleMobileNav(false);
+    }
+  });
+
+  // 3D tilt on glass cards (only on pointer devices supporting hover)
+  if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    document.querySelectorAll('.glass-card').forEach(card => {
+      card.addEventListener('mousemove', e => {
+        const r = card.getBoundingClientRect();
+        const x = e.clientX - r.left;
+        const y = e.clientY - r.top;
+        const cx = x / r.width - 0.5;
+        const cy = y / r.height - 0.5;
+        card.style.transform = `rotateX(${(-cy * 8).toFixed(2)}deg) rotateY(${(cx * 10).toFixed(2)}deg) translateY(-4px)`;
+        card.style.setProperty('--mx', x + 'px');
+        card.style.setProperty('--my', y + 'px');
+      });
+      card.addEventListener('mouseleave', () => {
+        card.style.transform = 'rotateX(0) rotateY(0) translateY(0)';
+      });
+    });
+  }
 
   // ---------------------------------------------------------------------
   // Contact / enquiry form -> backend API

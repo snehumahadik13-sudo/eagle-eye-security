@@ -2,3 +2,5 @@
 .env.*
 !.env.example
 node_modules/
+powershell.cmd
+powershell.bat

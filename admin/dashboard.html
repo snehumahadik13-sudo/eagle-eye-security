@@ -9,8 +9,20 @@
 </head>
 <body>
   <div class="app">
-    <aside class="sidebar">
-      <h2>Eagle Eye Admin</h2>
+    <div class="admin-mobile-header">
+      <div class="admin-mobile-brand">
+        <strong>Eagle Eye</strong> Admin
+      </div>
+      <button class="admin-menu-btn" id="adminNavToggle" aria-label="Toggle Navigation">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <div class="admin-backdrop" id="adminNavBackdrop"></div>
+    <aside class="sidebar" id="adminSidebar">
+      <div class="sidebar-head">
+        <h2>Eagle Eye Admin</h2>
+        <button class="sidebar-close" id="adminSidebarClose" aria-label="Close Sidebar">&times;</button>
+      </div>
       <nav>
         <a href="#enquiries" data-tab="enquiries">Client Enquiries</a>
         <a href="#applications" data-tab="applications">Job Applications</a>
