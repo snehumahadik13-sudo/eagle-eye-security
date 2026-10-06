@@ -164,8 +164,8 @@ insert into job_openings (title, location, description, requirements) values
 on conflict do nothing;
 
 insert into website_settings (key, value) values
-  ('phone', '"+919876543210"'),
-  ('whatsapp', '"919876543210"'),
+  ('phone', '"+919209050021"'),
+  ('whatsapp', '"+919209050021"'),
   ('email', '"contact@eagleeyesecurity.in"'),
   ('address', '"Satara, Maharashtra, India"')
 on conflict (key) do nothing;
